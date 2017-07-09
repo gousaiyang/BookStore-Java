@@ -1,2 +1,5 @@
 # BookStore-Java
-Simple Online Bookstore (Version 2-4, written in Java)
+
+This is iter3.
+
+TODO: Write some necessary description.
