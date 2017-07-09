@@ -1,0 +1,5 @@
+{"_id":{"$oid":"5960cee9d02ecd177b20087a"},"_class":"bookstore.model.Address","userId":1,"address":["上海市闵行区东川路800号上海交通大学xx栋学生宿舍","上海市闵行区东川路800号上海交通大学软件学院x号楼xxxx","火星表面第42号坑洞"]}
+{"_id":{"$oid":"5960cf07d02ecd177b20087b"},"_class":"bookstore.model.Address","userId":2,"address":["找不到的","不存在的"]}
+{"_id":{"$oid":"5961ee15d02e0d3a5573523f"},"_class":"bookstore.model.Address","userId":13,"address":["\u003cscript\u003ealert('xss');\u003c/script\u003e"]}
+{"_id":{"$oid":"596213f2d02e05c8a56cd620"},"_class":"bookstore.model.Address","userId":14,"address":["' or 1=1 --"]}
+{"_id":{"$oid":"596213f6d02e05c8a56cd621"},"_class":"bookstore.model.Address","userId":15,"address":[]}

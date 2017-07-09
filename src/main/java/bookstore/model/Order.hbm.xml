@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="bookstore.model.Order" table='"Order"'>
+        <id name="id" column="order_id">
+            <generator class="native"/>
+        </id>
+        <property name="userId" column="user_id"/>
+        <property name="isPaid" column="is_paid"/>
+        <property name="totalPrice" column="total_price"/>
+        <property name="createTime" column="created_at"/>
+        <property name="updateTime" column="updated_at"/>
+        <property name="deleteTime" column="deleted_at"/>
+    </class>
+</hibernate-mapping>

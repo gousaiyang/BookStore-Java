@@ -1,0 +1,89 @@
+/* Overall */
+
+body {
+    padding-top: 70px;
+    padding-bottom: 100px;
+}
+
+.table-hover > tbody > tr:hover {
+    background-color: #dff0d8;
+}
+
+#footer {
+    padding: 25px;
+    background-color: #dad8f0;
+}
+
+.book-image, .user-image {
+    max-width: 150px;
+    max-height: 150px;
+}
+
+
+/* Navbar */
+
+.navbar-nav > li > a {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    line-height: 30px;
+}
+
+.navbar-avatar {
+    max-height: 30px;
+    width: auto;
+    vertical-align: middle;
+}
+
+.badge-cart {
+    background-color: #d9534f;
+}
+
+
+/* Book detail dialog */
+
+#bookDetailName {
+    margin-top: 0;
+}
+
+.book-detail-item {
+    display: inline-block;
+    padding-right: 25px;
+}
+
+#bookDetailPrice {
+    font-size: 20px;
+}
+
+#bookDetailCategories {
+    padding-top: 7px;
+}
+
+#addQuantity {
+    width: 70px;
+}
+
+
+/* Cart Page */
+
+#totalPriceText {
+    font-size: 18px;
+}
+
+
+/* Admin Detail dialog */
+
+.tip-under-image {
+    margin-top: 10px;
+}
+
+.large-label {
+    font-size: 100%;
+    font-weight: 500;
+}
+
+/* Admin Statistics Page */
+
+.stat-item {
+    font-size: 18px;
+    padding-right: 30px;
+}

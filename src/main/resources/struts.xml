@@ -1,0 +1,1163 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Struts2 DTD -->
+<!DOCTYPE struts PUBLIC
+    "-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+    "http://struts.apache.org/dtds/struts-2.3.dtd">
+<struts>
+    <constant name="struts.i18n.encoding" value="utf-8" />
+    <constant name="struts.devMode" value="true" />
+    <constant name="struts.json.dateformat" value="yyyy-MM-dd HH:mm:ss" />
+    
+    <package name="pages" extends="struts-default">
+        <action name="home" method="homeView" class="bookstore.action.HomeAction">
+            <result name="success">/WEB-INF/jsp/home.jsp</result>
+        </action>
+        <action name="cart" method="cartView" class="bookstore.action.CartAction">
+            <result name="success">/WEB-INF/jsp/cart.jsp</result>
+            <result name="login">/WEB-INF/jsp/error/401.jsp</result>
+        </action>
+        <action name="orders" method="ordersView" class="bookstore.action.OrderAction">
+            <result name="success">/WEB-INF/jsp/orders.jsp</result>
+            <result name="login">/WEB-INF/jsp/error/401.jsp</result>
+        </action>
+        <action name="logout" method="doLogout" class="bookstore.action.AuthAction">
+            <result name="success">/index.jsp</result>
+        </action>
+        <action name="*">
+            <result>/WEB-INF/jsp/error/404.jsp</result>
+        </action>
+    </package>
+    
+    <package name="APIs" namespace="/api" extends="json-default">
+        <action name="register" method="doRegister" class="bookstore.action.AuthAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="login" method="doLogin" class="bookstore.action.AuthAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="upload" class="bookstore.action.UploadImageAction">
+            <interceptor-ref name="fileUploadStack">
+                <param name="fileUpload.maximumSize">2097152</param>
+                <param name="fileUpload.allowedTypes">image/jpeg,image/png,image/bmp,image/gif</param>
+            </interceptor-ref>
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="bookAPIs" namespace="/api/books" extends="json-default">
+        <action name="all" method="getAllBooks" class="bookstore.action.HomeAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="search" method="searchBooks" class="bookstore.action.HomeAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="detail" method="getBookDetail" class="bookstore.action.HomeAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="cartAPIs" namespace="/api/cart" extends="json-default">
+        <action name="count" method="getCartCount" class="bookstore.action.CartAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="summary" method="getCartSummary" class="bookstore.action.CartAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="detail" method="getCartDetail" class="bookstore.action.CartAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="add" method="addToCart" class="bookstore.action.CartAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="update" method="updateCartItem" class="bookstore.action.CartAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="delete" method="deleteCartItem" class="bookstore.action.CartAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="pay" method="payCart" class="bookstore.action.CartAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="orderAPIs" namespace="/api/orders" extends="json-default">
+        <action name="all" method="getAllOrders" class="bookstore.action.OrderAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="detail" method="getOrderDetail" class="bookstore.action.OrderAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="delete" method="deleteOrder" class="bookstore.action.OrderAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="profileAPIs" namespace="/api/profile" extends="json-default">
+        <action name="detail" method="getMyProfile" class="bookstore.action.ProfileAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="update" method="updateMyProfile" class="bookstore.action.ProfileAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="addressAPIs" namespace="/api/address" extends="json-default">
+        <action name="all" method="getMyAddress" class="bookstore.action.ProfileAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="update" method="updateMyAddress" class="bookstore.action.ProfileAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="adminPages" namespace="/admin" extends="struts-default">
+        <action name="books" method="allBooksView" class="bookstore.action.AdminBookAction">
+            <result name="success">/WEB-INF/jsp/admin/book.jsp</result>
+            <result name="login">/WEB-INF/jsp/error/401.jsp</result>
+            <result name="forbidden">/WEB-INF/jsp/error/403.jsp</result>
+        </action>
+        <action name="categories" method="allCategoriesView" class="bookstore.action.AdminCategoryAction">
+            <result name="success">/WEB-INF/jsp/admin/category.jsp</result>
+            <result name="login">/WEB-INF/jsp/error/401.jsp</result>
+            <result name="forbidden">/WEB-INF/jsp/error/403.jsp</result>
+        </action>
+        <action name="users" method="allUsersView" class="bookstore.action.AdminUserAction">
+            <result name="success">/WEB-INF/jsp/admin/user.jsp</result>
+            <result name="login">/WEB-INF/jsp/error/401.jsp</result>
+            <result name="forbidden">/WEB-INF/jsp/error/403.jsp</result>
+        </action>
+        <action name="orders" method="allOrdersView" class="bookstore.action.AdminOrderAction">
+            <result name="success">/WEB-INF/jsp/admin/order.jsp</result>
+            <result name="login">/WEB-INF/jsp/error/401.jsp</result>
+            <result name="forbidden">/WEB-INF/jsp/error/403.jsp</result>
+        </action>
+        <action name="stat" method="statisticsPage" class="bookstore.action.AdminStatAction">
+            <result name="success">/WEB-INF/jsp/admin/stat.jsp</result>
+            <result name="login">/WEB-INF/jsp/error/401.jsp</result>
+            <result name="forbidden">/WEB-INF/jsp/error/403.jsp</result>
+        </action>
+    </package>
+    
+    <package name="adminBookAPIs" namespace="/admin/api/books" extends="json-default">
+        <action name="all" method="getAllBooks" class="bookstore.action.AdminBookAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="detail" method="getBookDetail" class="bookstore.action.AdminBookAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="add" method="addBook" class="bookstore.action.AdminBookAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="update" method="updateBook" class="bookstore.action.AdminBookAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="delete" method="deleteBook" class="bookstore.action.AdminBookAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="adminCategoryAPIs" namespace="/admin/api/categories" extends="json-default">
+        <action name="all" method="getAllCategories" class="bookstore.action.AdminCategoryAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="detail" method="getCategoryDetail" class="bookstore.action.AdminCategoryAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="add" method="addCategory" class="bookstore.action.AdminCategoryAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="update" method="updateCategory" class="bookstore.action.AdminCategoryAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="delete" method="deleteCategory" class="bookstore.action.AdminCategoryAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="addBook" method="addBookToCategory" class="bookstore.action.AdminCategoryAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="deleteBook" method="deleteBookFromCategory" class="bookstore.action.AdminCategoryAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="adminOrderAPIs" namespace="/admin/api/orders" extends="json-default">
+        <action name="all" method="getAllOrders" class="bookstore.action.AdminOrderAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="detail" method="getOrderDetail" class="bookstore.action.AdminOrderAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="adminUserAPIs" namespace="/admin/api/users" extends="json-default">
+        <action name="all" method="getAllUsers" class="bookstore.action.AdminUserAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="detail" method="getUserDetail" class="bookstore.action.AdminUserAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="add" method="addUser" class="bookstore.action.AdminUserAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="update" method="updateUser" class="bookstore.action.AdminUserAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="delete" method="deleteUser" class="bookstore.action.AdminUserAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="adminUserAddressAPIs" namespace="/admin/api/users/address" extends="json-default">
+        <action name="all" method="getAddress" class="bookstore.action.AdminUserAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="update" method="updateAddress" class="bookstore.action.AdminUserAction">
+            <result name="success" type="json">
+                <param name="statusCode">201</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+    
+    <package name="adminStatAPIs" namespace="/admin/api/stat" extends="json-default">
+        <action name="category" method="statCategory" class="bookstore.action.AdminStatAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="book" method="statBook" class="bookstore.action.AdminStatAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+        <action name="user" method="statUser" class="bookstore.action.AdminStatAction">
+            <result name="success" type="json">
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="error" type="json">
+                <param name="statusCode">400</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="none" type="json">
+                <param name="statusCode">404</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="login" type="json">
+                <param name="statusCode">401</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+            <result name="forbidden" type="json">
+                <param name="statusCode">403</param>
+                <param name="noCache">true</param>
+                <param name="excludeNullProperties">true</param>
+                <param name="root">retJson</param>
+            </result>
+        </action>
+    </package>
+</struts>
