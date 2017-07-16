@@ -118,10 +118,7 @@ public class CartAction extends BaseAction {
             return ERROR;
         }
         
-        Order cart = appService.getUserCart(user.getId());
-        OrderItem item = new OrderItem(cart.getId(), bookId, Integer.parseInt(getQuantity()));
-        
-        appService.addOrderItem(item);
+        appService.addItemToCart(user, bookId, Integer.parseInt(getQuantity()));
         
         retJson = new SuccessMessage();
         return SUCCESS;
@@ -174,8 +171,7 @@ public class CartAction extends BaseAction {
             return "forbidden";
         }
         
-        item.setQuantity(Integer.parseInt(getQuantity()));
-        appService.updateOrderItem(item);
+        appService.updateOrderItem(item, Integer.parseInt(getQuantity()));
         
         retJson = new SuccessMessage();
         return SUCCESS;
@@ -236,7 +232,7 @@ public class CartAction extends BaseAction {
             return LOGIN;
         }
         
-        retJson = appService.payOrder(appService.getUserCart(user.getId()));
+        retJson = appService.payCart(user);
         return SUCCESS;
     }
 

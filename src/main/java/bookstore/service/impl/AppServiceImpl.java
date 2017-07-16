@@ -1,6 +1,12 @@
 package bookstore.service.impl;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 
 import bookstore.dao.BookCategoryDao;
 import bookstore.dao.BookDao;
@@ -20,6 +26,8 @@ import bookstore.model.result.FailureMessage;
 import bookstore.model.result.SuccessMessage;
 import bookstore.model.result.UserDetail;
 import bookstore.service.AppService;
+import bookstore.util.HashUtil;
+import bookstore.util.PasswordUtil;
 
 
 public class AppServiceImpl implements AppService {
@@ -88,11 +96,31 @@ public class AppServiceImpl implements AppService {
         return new BookDetail(book, bookDao.getBookCategories(id), isAdmin);
     }
 
-    public Integer addBook(Book book) {
-        return bookDao.save(book);
+    public Integer addBook(String name, String image, String author, String press, String price, String stock, String description) {
+        Book book = new Book();
+        book.setName(name);
+        book.setImage(image);
+        book.setAuthor(author);
+        book.setPress(press);
+        book.setPrice((int)(Float.parseFloat(price) * 100));
+        book.setStock(Integer.parseInt(stock));
+        book.setDescription(description);
+        bookDao.save(book);
+        return book.getId();
+    }
+    
+    public void updateBook(Book book) {
+        bookDao.update(book);
     }
 
-    public void updateBook(Book book) {
+    public void updateBook(Book book, String name, String image, String author, String press, String price, String stock, String description) {
+        book.setName(name);
+        book.setImage(image);
+        book.setAuthor(author);
+        book.setPress(press);
+        book.setPrice((int)(Float.parseFloat(price) * 100));
+        book.setStock(Integer.parseInt(stock));
+        book.setDescription(description);
         bookDao.update(book);
     }
     
@@ -112,11 +140,14 @@ public class AppServiceImpl implements AppService {
         return categoryDao.getCategoryById(id);
     }
     
-    public Integer addCategory(Category category) {
-        return categoryDao.save(category);
+    public Integer addCategory(String name) {
+        Category category = new Category(name);
+        categoryDao.save(category);
+        return category.getId();
     }
 
-    public void updateCategory(Category category) {
+    public void updateCategory(Category category, String name) {
+        category.setName(name);
         categoryDao.update(category);
     }
     
@@ -140,8 +171,8 @@ public class AppServiceImpl implements AppService {
         return bookCategoryDao.findBC(categoryId, bookId);
     }
     
-    public Integer addBC(BookCategory bc) {
-        return bookCategoryDao.save(bc);
+    public Integer addBC(int categoryId, int bookId) {
+        return bookCategoryDao.save(new BookCategory(categoryId, bookId));
     }
     
     public void deleteBC(BookCategory bc) {
@@ -233,6 +264,10 @@ public class AppServiceImpl implements AppService {
         return new SuccessMessage();
     }
     
+    public Object payCart(User user) {
+        return payOrder(getUserCart(user.getId()));
+    }
+    
     public void deleteOrder(Order order) {
         orderDao.softDelete(order);
     }
@@ -270,7 +305,17 @@ public class AppServiceImpl implements AppService {
         return orderItemDao.save(orderItem);
     }
     
+    public void addItemToCart(User user, int bookId, int quantity) {
+        Order cart = getUserCart(user.getId());
+        orderItemDao.save(new OrderItem(cart.getId(), bookId, quantity));
+    }
+    
     public void updateOrderItem(OrderItem orderItem) {
+        orderItemDao.update(orderItem);
+    }
+    
+    public void updateOrderItem(OrderItem orderItem, int quantity) {
+        orderItem.setQuantity(quantity);
         orderItemDao.update(orderItem);
     }
 
@@ -305,13 +350,40 @@ public class AppServiceImpl implements AppService {
         return userDao.usernameExists(username);
     }
     
-    public Integer addUser(User user) {
-        int ret = userDao.save(user);
+    public Integer addUser(String username, String password, String nickname, String avatar, String balance, String role) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(PasswordUtil.passwordHash(password));
+        user.setNickname(nickname);
+        user.setAvatar(avatar);
+        user.setBalance((int)(Float.parseFloat(balance) * 100));
+        user.setRole(role.equals("1"));
+        userDao.save(user);
         createUserCart(user.getId());
-        return ret;
+        return user.getId();
+    }
+    
+    public void updateUser(User user) {
+        userDao.update(user);
+    }
+    
+    public void updateUser(User user, String username, String password, String nickname, String avatar) {
+        user.setUsername(username);
+        if (!password.isEmpty())
+            user.setPassword(PasswordUtil.passwordHash(password));
+        user.setNickname(nickname);
+        user.setAvatar(avatar);
+        userDao.update(user);
     }
 
-    public void updateUser(User user) {
+    public void updateUser(User user, String username, String password, String nickname, String avatar, String balance, String role) {
+        user.setUsername(username);
+        if (!password.isEmpty())
+            user.setPassword(PasswordUtil.passwordHash(password));
+        user.setNickname(nickname);
+        user.setAvatar(avatar);
+        user.setBalance((int)(Float.parseFloat(balance) * 100));
+        user.setRole(role.equals("1"));
         userDao.update(user);
     }
     
@@ -324,7 +396,13 @@ public class AppServiceImpl implements AppService {
     }
     
     public void updateUserAddress(int userId, List<String> addresses) {
-        userDao.updateUserAddress(userId, addresses);
+        List<String> newAddresses = new ArrayList<String>();
+        for (String address: addresses) {
+            String addr = address.trim();
+            if (!addr.isEmpty())
+                newAddresses.add(addr);
+        }
+        userDao.updateUserAddress(userId, newAddresses);
     }
 
         
@@ -343,5 +421,23 @@ public class AppServiceImpl implements AppService {
     
     public List<Integer> statUser(String username, String startDate, String endDate) {
         return statDao.statUser(username, startDate, endDate);
+    }
+    
+    
+    // Upload Image
+    
+    public String uploadImage(String path, File file, String filename) {
+        try {
+            String newName = HashUtil.sha1File(file) + "_"
+                + Long.toString(System.currentTimeMillis()) + "_"
+                + Integer.toString(ThreadLocalRandom.current().nextInt(1, 1001)) + "."
+                + FilenameUtils.getExtension(filename);
+            File newFile = new File(path, newName);
+            FileUtils.copyFile(file, newFile);
+            return newName;
+        }
+        catch (Exception e) {
+            return "";
+        }
     }
 }

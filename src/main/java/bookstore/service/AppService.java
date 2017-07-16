@@ -1,5 +1,6 @@
 package bookstore.service;
 
+import java.io.File;
 import java.util.List;
 
 import bookstore.model.Book;
@@ -25,9 +26,11 @@ public interface AppService {
     
     public BookDetail getBookDetailById(int id, boolean isAdmin);
     
-    public Integer addBook(Book book);
+    public Integer addBook(String name, String image, String author, String press, String price, String stock, String description);
 
     public void updateBook(Book book);
+    
+    public void updateBook(Book book, String name, String image, String author, String press, String price, String stock, String description);
     
     public void deleteBook(Book book);
     
@@ -39,9 +42,9 @@ public interface AppService {
     
     public Category getCategoryById(int id);
     
-    public Integer addCategory(Category category);
+    public Integer addCategory(String name);
 
-    public void updateCategory(Category category);
+    public void updateCategory(Category category, String name);
     
     public void deleteCategory(Category category);
     
@@ -55,7 +58,7 @@ public interface AppService {
     
     public BookCategory findBC(int categoryId, int bookId);
     
-    public Integer addBC(BookCategory bc);
+    public Integer addBC(int categoryId, int bookId);
     
     public void deleteBC(BookCategory bc);
     
@@ -80,6 +83,8 @@ public interface AppService {
     
     public Object payOrder(Order order);
     
+    public Object payCart(User user);
+    
     public void deleteOrder(Order order);
 
     
@@ -100,8 +105,12 @@ public interface AppService {
     public OrderItem getOrderItemById(int id);
     
     public Integer addOrderItem(OrderItem orderItem);
+    
+    public void addItemToCart(User user, int bookId, int quantity);
 
     public void updateOrderItem(OrderItem orderItem);
+    
+    public void updateOrderItem(OrderItem orderItem, int quantity);
     
     public void deleteOrderItem(OrderItem orderItem);
 
@@ -119,9 +128,13 @@ public interface AppService {
     
     public boolean usernameExists(String username);
     
-    public Integer addUser(User user);
+    public Integer addUser(String username, String password, String nickname, String avatar, String balance, String role);
     
     public void updateUser(User user);
+    
+    public void updateUser(User user, String username, String password, String nickname, String avatar);
+    
+    public void updateUser(User user, String username, String password, String nickname, String avatar, String balance, String role);
 
     public void deleteUser(User user);
     
@@ -137,5 +150,10 @@ public interface AppService {
     public List<Integer> statBook(int bookId, String startDate, String endDate);
     
     public List<Integer> statUser(String username, String startDate, String endDate);
+    
+    
+    // Upload Image
+    
+    public String uploadImage(String path, File file, String filename);
 
 }

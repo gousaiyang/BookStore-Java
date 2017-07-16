@@ -91,16 +91,9 @@ public class AuthAction extends BaseAction {
             return ERROR;
         }
             
-        User user = new User();
-        user.setUsername(getUsername());
-        user.setPassword(PasswordUtil.passwordHash(getPassword()));
-        user.setNickname(getUsername());
-        user.setAvatar("");
-        user.setBalance(0);
-        user.setRole(false);
-        appService.addUser(user);
+        Integer newUserId = appService.addUser(getUsername(), getPassword(), getUsername(), "", "0", "0");
         
-        session().setAttribute("user", user);
+        session().setAttribute("user", appService.getUserById(newUserId));
         
         retJson = new SuccessMessage();
         return SUCCESS;

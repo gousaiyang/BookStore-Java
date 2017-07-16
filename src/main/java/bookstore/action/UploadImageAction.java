@@ -1,14 +1,11 @@
 package bookstore.action;
 
 import java.io.File;
-import java.util.concurrent.ThreadLocalRandom;
-
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
 import bookstore.model.result.FailureMessage;
 import bookstore.model.result.SuccessMessage;
-import bookstore.util.HashUtil;
+import bookstore.service.AppService;
 
 public class UploadImageAction extends BaseAction {
     
@@ -17,9 +14,11 @@ public class UploadImageAction extends BaseAction {
     private File file;
     private String filename;
     
-    private String uploadPath = "img/upload/";
+    private final static String uploadPath = "img/upload/";
     
     private Object retJson;
+    
+    private AppService appService;
     
     // Getters and setters
 
@@ -39,6 +38,13 @@ public class UploadImageAction extends BaseAction {
         this.retJson = retJson;
     }
     
+    public AppService getAppService() {
+        return appService;
+    }
+
+    public void setAppService(AppService appService) {
+        this.appService = appService;
+    }
     
     // Actions
 
@@ -49,21 +55,17 @@ public class UploadImageAction extends BaseAction {
             return LOGIN;
         }
         
-        try {
-            String uploadDir = FilenameUtils.concat(application().getRealPath("/"), uploadPath);
-            String newName = HashUtil.sha1File(file) + "_"
-                + Long.toString(System.currentTimeMillis()) + "_"
-                + Integer.toString(ThreadLocalRandom.current().nextInt(1, 1001)) + "."
-                + FilenameUtils.getExtension(filename);
-            File newFile = new File(uploadDir, newName);
-            FileUtils.copyFile(file, newFile);
-            retJson = new SuccessMessage(newName);
-            return SUCCESS;
-        }
-        catch (Exception e) {
+        String newFilename = appService.uploadImage(FilenameUtils.concat(application().getRealPath("/"), uploadPath),
+                file, filename);
+        
+        if (newFilename.isEmpty()) {
             retJson = new FailureMessage("上传失败！请检查文件大小和格式。");
             return ERROR;
         }
+        
+        retJson = new SuccessMessage(newFilename);
+        return SUCCESS;
+        
     }
 
 }

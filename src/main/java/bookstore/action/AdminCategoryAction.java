@@ -137,11 +137,8 @@ public class AdminCategoryAction extends BaseAction {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
-           
-        Category category = new Category(getName());
-        appService.addCategory(category);
-
-        retJson = new SuccessMessage(category.getId());
+        
+        retJson = new SuccessMessage(appService.addCategory(getName()));
         return SUCCESS;
     }
     
@@ -173,8 +170,7 @@ public class AdminCategoryAction extends BaseAction {
             return NONE;
         }
         
-        category.setName(getName());
-        appService.updateCategory(category);
+        appService.updateCategory(category, getName());
         
         retJson = new SuccessMessage();
         return SUCCESS;
@@ -249,8 +245,7 @@ public class AdminCategoryAction extends BaseAction {
             return ERROR;
         }
         
-        bc = new BookCategory(category.getId(), book.getId());
-        appService.addBC(bc);
+        appService.addBC(category.getId(), book.getId());
         
         retJson = new SuccessMessage();
         return SUCCESS;

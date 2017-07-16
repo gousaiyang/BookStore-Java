@@ -1,6 +1,5 @@
 package bookstore.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import bookstore.model.User;
@@ -8,7 +7,6 @@ import bookstore.model.result.FailureMessage;
 import bookstore.model.result.SuccessMessage;
 import bookstore.model.result.UserDetail;
 import bookstore.service.AppService;
-import bookstore.util.PasswordUtil;
 import bookstore.util.StringUtil;
 import bookstore.util.Validator;
 
@@ -228,17 +226,9 @@ public class AdminUserAction extends BaseAction {
             retJson = new FailureMessage("用户名 " + getUsername() + " 已经存在。");
             return ERROR;
         }
-            
-        User user = new User();
-        user.setUsername(getUsername());
-        user.setPassword(PasswordUtil.passwordHash(getPassword()));
-        user.setNickname(getNickname());
-        user.setAvatar(getAvatar());
-        user.setBalance((int)(Float.parseFloat(getBalance()) * 100));
-        user.setRole(getRole().equals("1"));
-        appService.addUser(user);
         
-        retJson = new SuccessMessage(user.getId());
+        retJson = new SuccessMessage(appService.addUser(getUsername(), getPassword(), getNickname(),
+                getAvatar(), getBalance(), getRole()));
         return SUCCESS;
     }
 
@@ -301,14 +291,7 @@ public class AdminUserAction extends BaseAction {
             return ERROR;
         }
         
-        user.setUsername(getUsername());
-        if (!getPassword().equals(""))
-            user.setPassword(PasswordUtil.passwordHash(getPassword()));
-        user.setNickname(getNickname());
-        user.setAvatar(getAvatar());
-        user.setBalance((int)(Float.parseFloat(getBalance()) * 100));
-        user.setRole(getRole().equals("1"));
-        appService.updateUser(user);
+        appService.updateUser(user, getUsername(), getPassword(), getNickname(), getAvatar(), getBalance(), getRole());
         
         retJson = new SuccessMessage();
         return SUCCESS;
@@ -403,15 +386,8 @@ public class AdminUserAction extends BaseAction {
             retJson = new FailureMessage("收货地址数组格式不正确");
             return ERROR;
         }
-        
-        List<String> newAddresses = new ArrayList<String>();
-        for (String address: addressArray) {
-            String addr = address.trim();
-            if (!addr.isEmpty())
-                newAddresses.add(addr);
-        }
-        
-        appService.updateUserAddress(userId, newAddresses);
+
+        appService.updateUserAddress(userId, addressArray);
         
         retJson = new SuccessMessage();
         return SUCCESS;

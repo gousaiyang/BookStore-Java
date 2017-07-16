@@ -191,18 +191,9 @@ public class AdminBookAction extends BaseAction {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
-           
-        Book book = new Book();
-        book.setName(getName());
-        book.setImage(getImage());
-        book.setAuthor(getAuthor());
-        book.setPress(getPress());
-        book.setPrice((int)(Float.parseFloat(getPrice()) * 100));
-        book.setStock(Integer.parseInt(getStock()));
-        book.setDescription(getDescription());
-        appService.addBook(book);
-
-        retJson = new SuccessMessage(book.getId());
+        
+        retJson = new SuccessMessage(appService.addBook(getName(), getImage(), getAuthor(), getPress(),
+                getPrice(), getStock(), getDescription()));
         return SUCCESS;
     }
     
@@ -244,14 +235,7 @@ public class AdminBookAction extends BaseAction {
             return NONE;
         }
         
-        book.setName(getName());
-        book.setImage(getImage());
-        book.setAuthor(getAuthor());
-        book.setPress(getPress());
-        book.setPrice((int)(Float.parseFloat(getPrice()) * 100));
-        book.setStock(Integer.parseInt(getStock()));
-        book.setDescription(getDescription());
-        appService.updateBook(book);
+        appService.updateBook(book, getName(), getImage(), getAuthor(), getPress(), getPrice(), getStock(), getDescription());
         
         retJson = new SuccessMessage();
         return SUCCESS;

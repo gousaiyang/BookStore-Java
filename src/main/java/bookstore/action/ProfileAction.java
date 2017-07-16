@@ -1,13 +1,11 @@
 package bookstore.action;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import bookstore.model.User;
 import bookstore.model.result.FailureMessage;
 import bookstore.model.result.SuccessMessage;
 import bookstore.service.AppService;
-import bookstore.util.PasswordUtil;
 import bookstore.util.StringUtil;
 import bookstore.util.Validator;
 
@@ -141,12 +139,7 @@ public class ProfileAction extends BaseAction {
             return ERROR;
         }
         
-        user.setUsername(getUsername());
-        if (!getPassword().equals(""))
-            user.setPassword(PasswordUtil.passwordHash(getPassword()));
-        user.setNickname(getNickname());
-        user.setAvatar(getAvatar());
-        appService.updateUser(user);
+        appService.updateUser(user, getUsername(), getPassword(), getNickname(), getAvatar());
         
         retJson = new SuccessMessage();
         return SUCCESS;
@@ -182,14 +175,7 @@ public class ProfileAction extends BaseAction {
             return ERROR;
         }
         
-        List<String> newAddresses = new ArrayList<String>();
-        for (String address: addressArray) {
-            String addr = address.trim();
-            if (!addr.isEmpty())
-                newAddresses.add(addr);
-        }
-        
-        appService.updateUserAddress(user.getId(), newAddresses);
+        appService.updateUserAddress(user.getId(), addressArray);
         
         retJson = new SuccessMessage();
         return SUCCESS;
