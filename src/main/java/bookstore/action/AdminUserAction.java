@@ -19,18 +19,18 @@ public class AdminUserAction extends BaseAction {
     private String password;
     private String passwordConfirm;
     private String nickname;
-    private String avatar;  
+    private String avatar;
     private String balance;
     private String role;
 
     private String addresses;
-    
+
     private Object retJson;
-    
+
     private AppService appService;
-    
+
     // Getters and setters
-    
+
     public String getId() {
         return StringUtil.replaceNull(id);
     }
@@ -118,17 +118,16 @@ public class AdminUserAction extends BaseAction {
     public void setAppService(AppService appService) {
         this.appService = appService;
     }
-    
-    
+
     // Actions
-    
+
     public String allUsersView() throws Exception {
         User user = (User) session().getAttribute("user");
         if (user == null)
             return LOGIN;
         if (!user.isAdmin())
             return "forbidden";
-        
+
         setPageTitle("网上书店管理系统 - 用户管理");
         setViewProfile();
         return SUCCESS;
@@ -144,11 +143,11 @@ public class AdminUserAction extends BaseAction {
             retJson = new FailureMessage("禁止访问");
             return "forbidden";
         }
-        
+
         retJson = appService.getAllUsers();
         return SUCCESS;
     }
-    
+
     public String getUserDetail() throws Exception {
         User user = (User) session().getAttribute("user");
         if (user == null) {
@@ -159,23 +158,23 @@ public class AdminUserAction extends BaseAction {
             retJson = new FailureMessage("禁止访问");
             return "forbidden";
         }
-        
+
         Validator vd = new Validator(getId(), "编号");
         if (!vd.validateNotEmpty() || !vd.validatePositiveInt()) {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
-        
+
         UserDetail userDetail = appService.getUserDetailById(Integer.parseInt(getId()), true);
         if (userDetail == null) {
             retJson = new FailureMessage("该用户编号不存在。");
             return NONE;
         }
-        
+
         retJson = userDetail;
         return SUCCESS;
     }
-    
+
     public String addUser() throws Exception {
         User currentUser = (User) session().getAttribute("user");
         if (currentUser == null) {
@@ -186,9 +185,10 @@ public class AdminUserAction extends BaseAction {
             retJson = new FailureMessage("禁止访问");
             return "forbidden";
         }
-        
+
         Validator vd = new Validator(getUsername(), "用户名");
-        if (!vd.validateNotEmpty() || !vd.validatePattern("^[-_0-9a-zA-Z]{5,}$", "用户名只能由字母、数字、破折号(-)和下划线(_)组成，且最小长度为 5 个字符。")) {
+        if (!vd.validateNotEmpty()
+                || !vd.validatePattern("^[-_0-9a-zA-Z]{5,}$", "用户名只能由字母、数字、破折号(-)和下划线(_)组成，且最小长度为 5 个字符。")) {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
@@ -221,14 +221,14 @@ public class AdminUserAction extends BaseAction {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
-        
+
         if (appService.usernameExists(getUsername())) {
             retJson = new FailureMessage("用户名 " + getUsername() + " 已经存在。");
             return ERROR;
         }
-        
-        retJson = new SuccessMessage(appService.addUser(getUsername(), getPassword(), getNickname(),
-                getAvatar(), getBalance(), getRole()));
+
+        retJson = new SuccessMessage(
+                appService.addUser(getUsername(), getPassword(), getNickname(), getAvatar(), getBalance(), getRole()));
         return SUCCESS;
     }
 
@@ -242,14 +242,15 @@ public class AdminUserAction extends BaseAction {
             retJson = new FailureMessage("禁止访问");
             return "forbidden";
         }
-        
+
         Validator vd = new Validator(getId(), "编号");
         if (!vd.validateNotEmpty() || !vd.validatePositiveInt()) {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
         vd = new Validator(getUsername(), "用户名");
-        if (!vd.validateNotEmpty() || !vd.validatePattern("^[-_0-9a-zA-Z]{5,}$", "用户名只能由字母、数字、破折号(-)和下划线(_)组成，且最小长度为 5 个字符。")) {
+        if (!vd.validateNotEmpty()
+                || !vd.validatePattern("^[-_0-9a-zA-Z]{5,}$", "用户名只能由字母、数字、破折号(-)和下划线(_)组成，且最小长度为 5 个字符。")) {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
@@ -279,24 +280,29 @@ public class AdminUserAction extends BaseAction {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
-        
+
         User user = appService.getUserById(Integer.parseInt(getId()));
         if (user == null) {
             retJson = new FailureMessage("该用户编号不存在。");
             return NONE;
         }
-        
+
+        if (user.getId() == currentUser.getId() && getRole().equals("0")) {
+            retJson = new FailureMessage("禁止更改当前用户权限。");
+            return "forbidden";
+        }
+
         if (!getUsername().equals(user.getUsername()) && appService.usernameExists(getUsername())) {
             retJson = new FailureMessage("用户名 " + getUsername() + " 已经存在。");
             return ERROR;
         }
-        
+
         appService.updateUser(user, getUsername(), getPassword(), getNickname(), getAvatar(), getBalance(), getRole());
-        
+
         retJson = new SuccessMessage();
         return SUCCESS;
     }
-    
+
     public String deleteUser() throws Exception {
         User currentUser = (User) session().getAttribute("user");
         if (currentUser == null) {
@@ -313,19 +319,24 @@ public class AdminUserAction extends BaseAction {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
-        
+
         User user = appService.getUserById(Integer.parseInt(getId()));
         if (user == null) {
             retJson = new FailureMessage("该用户编号不存在。");
             return NONE;
         }
-        
+
+        if (user.getId() == currentUser.getId()) {
+            retJson = new FailureMessage("禁止删除当前用户。");
+            return "forbidden";
+        }
+
         appService.deleteUser(user);
-        
+
         retJson = new SuccessMessage();
         return SUCCESS;
     }
-    
+
     public String getAddress() throws Exception {
         User currentUser = (User) session().getAttribute("user");
         if (currentUser == null) {
@@ -336,19 +347,19 @@ public class AdminUserAction extends BaseAction {
             retJson = new FailureMessage("禁止访问");
             return "forbidden";
         }
-        
+
         Validator vd = new Validator(getId(), "编号");
         if (!vd.validateNotEmpty() || !vd.validatePositiveInt()) {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
-        
+
         int userId = Integer.parseInt(getId());
         if (appService.getUserById(userId) == null) {
             retJson = new FailureMessage("该用户编号不存在。");
             return NONE;
         }
-        
+
         try {
             retJson = appService.getUserAddress(userId);
             return SUCCESS;
@@ -357,7 +368,7 @@ public class AdminUserAction extends BaseAction {
             return ERROR;
         }
     }
-    
+
     public String updateAddress() throws Exception {
         User currentUser = (User) session().getAttribute("user");
         if (currentUser == null) {
@@ -368,19 +379,19 @@ public class AdminUserAction extends BaseAction {
             retJson = new FailureMessage("禁止访问");
             return "forbidden";
         }
-        
+
         Validator vd = new Validator(getId(), "编号");
         if (!vd.validateNotEmpty() || !vd.validatePositiveInt()) {
             retJson = vd.getFailureMessage();
             return ERROR;
         }
-        
+
         int userId = Integer.parseInt(getId());
         if (appService.getUserById(userId) == null) {
             retJson = new FailureMessage("该用户编号不存在。");
             return NONE;
         }
-        
+
         List<String> addressArray = StringUtil.JSONStringArrayParse(addresses);
         if (addressArray == null) {
             retJson = new FailureMessage("收货地址数组格式不正确");
@@ -388,7 +399,7 @@ public class AdminUserAction extends BaseAction {
         }
 
         appService.updateUserAddress(userId, addressArray);
-        
+
         retJson = new SuccessMessage();
         return SUCCESS;
     }

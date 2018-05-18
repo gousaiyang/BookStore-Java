@@ -1,10 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8" %>
+<%@ taglib prefix="s" uri="/struts-tags" %>
 <% response.setStatus(404); %>
 <!DOCTYPE html>
 <html>
     <head>
-        <title>Page Not Found.</title>
+        <title>页面不存在</title>
 
         <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">
 
@@ -43,7 +44,8 @@
     <body>
         <div class="container">
             <div class="content">
-                <div class="title">Page Not Found.</div>
+                <div class="title">页面不存在！</div>
+                <a href="<s:url value="/home"/>">回到首页</a>
             </div>
         </div>
     </body>
