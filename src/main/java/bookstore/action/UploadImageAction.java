@@ -58,8 +58,8 @@ public class UploadImageAction extends BaseAction {
             return LOGIN;
         }
 
-        List<String> allowedExtensions = Arrays.asList(".jpg", ".jpeg", ".png", ".bmp", ".gif");
-        if (allowedExtensions.indexOf(FilenameUtils.getExtension(filename)) == -1) {
+        List<String> allowedExtensions = Arrays.asList("jpg", "jpeg", "png", "bmp", "gif");
+        if (allowedExtensions.indexOf(FilenameUtils.getExtension(filename).toLowerCase()) == -1) {
             retJson = new FailureMessage("上传失败！仅支持 JPG、PNG、BMP、GIF 图片格式！");
             return ERROR;
         }
