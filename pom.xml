@@ -32,7 +32,7 @@
 
         <ognl.version>3.0.6</ognl.version>
 
-        <spring.core.version>3.1.0.RELEASE</spring.core.version>
+        <spring.core.version>5.2.9.RELEASE</spring.core.version>
 
         <struts.core.version>2.3.20</struts.core.version>
 
