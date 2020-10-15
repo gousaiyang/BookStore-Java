@@ -28,7 +28,7 @@
         <javassist.version>3.7.1.GA</javassist.version>
         <jta.version>1.1</jta.version>
 
-        <mysql.version>5.1.13</mysql.version>
+        <mysql.version>8.0.16</mysql.version>
 
         <ognl.version>3.0.6</ognl.version>
 
