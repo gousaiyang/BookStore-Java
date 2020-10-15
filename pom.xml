@@ -13,7 +13,7 @@
         <antlr.version>2.7.6</antlr.version>
         <aspectjweaver.version>1.7.4</aspectjweaver.version>
         <backport.version>3.1</backport.version>
-        <mchange.version>0.9.5-pre8</mchange.version>
+        <mchange.version>0.9.5.4</mchange.version>
 
         <commons.collections.version>3.1</commons.collections.version>
         <commons.fileupload.version>1.2.1</commons.fileupload.version>
